@@ -6,6 +6,7 @@ from datetime import datetime, timedelta
 from flask import redirect, url_for
 from flask_babel import Babel
 import uuid
+# dasdasdadsas
 
 app = Flask(__name__)
 app.secret_key = 'dxT0"WojvG\Yf:!q5&A#ovn6#AJrs'
@@ -45,7 +46,6 @@ class User(db.Model):
                                  (User.native_language.ilike(f'%{search_query}%')) |
                                  (User.target_language.ilike(f'%{search_query}%')))
         return query.all()
-
 
 class LanguageExchangeRequest(db.Model):
     id = db.Column(db.Integer, primary_key=True)
