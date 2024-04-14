@@ -51,9 +51,9 @@ class LanguageExchangeRequest(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     sender_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
     receiver_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
-    sender_language = db.Column(db.String(50), nullable=False)  # Язык, который отправитель изучает
-    receiver_language = db.Column(db.String(50), nullable=False)  # Язык, который получатель изучает
-    status = db.Column(db.String(20), default='pending')  # Статус заявки: 'pending', 'accepted', 'rejected'
+    sender_language = db.Column(db.String(50), nullable=False)
+    receiver_language = db.Column(db.String(50), nullable=False)
+    status = db.Column(db.String(20), default='pending')
 
 
 class Thread(db.Model):
@@ -188,7 +188,7 @@ def login():
             session['user_id'] = user.id
             session['is_admin'] = user.is_admin == 1
             if remember:
-                session.permanent = True  # Устанавливает сессию как "постоянную"
+                session.permanent = True
                 app.permanent_session_lifetime = timedelta(days=7)
             else:
                 session.permanent = False
@@ -300,7 +300,7 @@ def conversation(conversation_id):
     messages = Message.query.filter_by(conversation_id=conversation_id).order_by(Message.timestamp.asc()).all()
     partner = next((user for user in convo.participants if user.id != current_user_id), None)
     return render_template('conversation.html', messages=messages, partner=partner,
-                           user=current_user)  # Передаем переменную user
+                           user=current_user)
 
 
 @app.route('/send_message/<int:receiver_id>', methods=['GET', 'POST'])
@@ -384,13 +384,9 @@ def accept_request(request_id):
     if request and request.receiver_id == session['user_id']:
         request.status = 'accepted'
         db.session.commit()
-
-        # Проверяем, есть ли уже беседа между этими пользователями
         existing_conversation = Conversation.query.join(conversation_user_link).filter(
             conversation_user_link.c.user_id.in_([request.sender_id, request.receiver_id])
         ).first()
-
-        # Если беседы нет, создаём новую
         if not existing_conversation:
             new_conversation = Conversation(participants=[
                 User.query.get(request.sender_id),

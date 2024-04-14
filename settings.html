@@ -1,0 +1,61 @@
+{% extends 'base.html' %}
+
+{% block title %}
+    Настройки
+{% endblock %}
+
+{% block content %}
+    <div class="main-container">
+        {% include 'main_content.html' %}
+        <h1 style="text-align: center;">Настройки</h1>
+        <div class="message-popup" style="text-align: center;">
+            {% with messages = get_flashed_messages(with_categories=true) %}
+                {% if messages %}
+                    {% for category, message in messages %}
+                        <div class="message alert-{{ category }}">{{ message }}</div>
+                    {% endfor %}
+                {% endif %}
+            {% endwith %}
+        </div>
+
+        <form action="{{ url_for('change_username') }}" method="POST" style="margin-bottom: 10px;">
+            <input type="text" id="new_username" name="new_username" placeholder="Новый ник" style="width: 100%;"><br>
+            <button type="submit" style="width: 100%;">Изменить ник</button>
+        </form>
+
+        <!-- Форма для изменения пароля -->
+        <form action="{{ url_for('change_password') }}" method="POST" style="margin-bottom: 10px;">
+            <input type="password" id="current_password" name="current_password" placeholder="Текущий пароль" style="width: 100%;"><br>
+            <input type="password" id="new_password" name="new_password" placeholder="Новый пароль" style="width: 100%;"><br>
+            <input type="password" id="confirm_password" name="confirm_password" placeholder="Подтверждение пароля" style="width: 100%;"><br>
+            <button type="submit" style="width: 100%;">Изменить пароль</button>
+        </form>
+
+        <!-- Форма для изменения изучаемого языка -->
+        <form action="{{ url_for('change_target_language') }}" method="POST" style="margin-bottom: 10px;">
+            <select name="new_target_language" id="new_target_language" required style="width: 100%;">
+                <option value="" disabled selected>Выберите язык для изучения</option>
+                <option value="Español">Español 🇪🇸</option>
+                <option value="Português">Português 🇵🇹</option>
+                <option value="日本語">日本語 🇯🇵</option>
+                <option value="中文">中文 🇨🇳</option>
+                <option value="Suomi">Suomen 🇫🇮</option>
+                <option value="Čeština">Čeština 🇨🇿</option>
+                <option value="Svenska">Svenska 🇸🇪</option>
+                <option value="Deutsch">Deutsch 🇩🇪</option>
+                <option value="English">English 🇬🇧</option>
+                <option value="Русский">Русский 🇷🇺</option>
+                <option value="Українська">Українська 🇺🇦</option>
+                <option value="Беларуская">Беларуская 🇧🇾</option>
+                <option value="Қазақша">Қазақша 🇰🇿</option>
+                <option value="Nederlands">Nederlands 🇳🇱</option>
+            </select><br>
+            <button type="submit" style="width: 100%;">Изменить изучаемый язык</button>
+        </form>
+
+        <!-- Кнопка "Выйти" -->
+        <div style="text-align: center; margin-bottom: 10px;">
+            <a href="{{ url_for('logout') }}" style="display: inline-block; padding: 10px 0; background-color: #007bff; color: white; text-decoration: none; border-radius: 5px; width: 24%;">Выйти</a>
+        </div>
+    </div>
+{% endblock %}
