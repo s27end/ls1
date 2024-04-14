@@ -36,7 +36,7 @@ class User(db.Model):
         return self.name if self.name else self.username
 
     @staticmethod
-    def find_matching_users(current_user, search_query=None):
+    def find_matching_users(current_user, search_query=None): # dwadwwdwd
         query = User.query.filter((User.target_language == current_user.native_language) &
                                   (User.native_language == current_user.target_language))
         if search_query:
