@@ -6,7 +6,7 @@ from datetime import datetime, timedelta
 from flask import redirect, url_for
 from flask_babel import Babel
 import uuid
-# dasdasdadsas
+
 
 app = Flask(__name__)
 app.secret_key = 'dxT0"WojvG\Yf:!q5&A#ovn6#AJrs'
