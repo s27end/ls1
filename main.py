@@ -253,16 +253,19 @@ def news_thread(thread_id):
 
 @app.route('/delete_thread', methods=['POST'])
 def delete_thread():
-    if not session.get('user_id'):
-        return 'Unauthorized', 401
-    if not session.get('is_admin', False):
-        return 'Forbidden', 403
+    if not session.get('is_authenticated'):
+        return jsonify({'error': 'Unauthorized'}), 401
     data = request.get_json()
     thread_id = data.get('thread_id')
-    thread = Thread.query.get_or_404(thread_id)
-    db.session.delete(thread)
-    db.session.commit()
-    return 'OK', 200
+    thread = Thread.query.get(thread_id)
+    if thread is None:
+        return jsonify({'error': 'Thread not found'}), 404
+    if thread.user_id == session['user_id'] or session.get('is_admin'):
+        db.session.delete(thread)
+        db.session.commit()
+        return jsonify({'success': 'Thread deleted'}), 200
+    else:
+        return jsonify({'error': 'Forbidden'}), 403
 
 
 @app.route('/delete_comment/<int:comment_id>', methods=['POST'])
