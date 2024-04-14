@@ -1,0 +1,217 @@
+{% extends 'base.html' %}
+
+{% block title %}
+    {{ _('Добро пожаловать на платформу') }}
+{% endblock %}
+
+{% block content %}
+<div class="main-container">
+    <button id="openSidebarMenu" class="sidebar-toggle">
+        <span class="menu-bar"></span>
+        <span class="menu-bar"></span>
+        <span class="menu-bar"></span>
+    </button>
+    <div class="sidebar" id="sidebar">
+        <ul>
+            {% set current_path = request.path %}
+            <li class="{% if current_path == url_for('news_list') %}active{% endif %}"><a href="{{ url_for('news_list') }}">{{ _('Общение') }}</a></li>
+            <li class="{% if current_path == url_for('messages') %}active{% endif %}"><a href="{{ url_for('messages') }}">{{ _('Сообщения') }}</a></li>
+            <li class="{% if current_path == url_for('study_materials') %}active{% endif %}"><a href="{{ url_for('study_materials') }}">{{ _('Классная комната') }}</a></li>
+            <li class="{% if current_path == url_for('requests') %}active{% endif %}"><a href="{{ url_for('requests') }}">{{ _('Заявки') }}</a></li>
+            <li class="{% if current_path == url_for('settings') %}active{% endif %}"><a href="{{ url_for('settings') }}">{{ _('Настройки') }}</a></li>
+            <li><a href="javascript:void(0);" class="info-icon" onclick="openModal()">ℹ️ {{ _('Информация') }}</a></li>
+        </ul>
+    </div>
+    <div id="infoModal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeModal()">&times;</span>
+            <div class="modal-header">
+                <h2>{{ _('Информация о разделах') }}</h2>
+            </div>
+            <ul class="modal-list">
+                <li>{{ _('Общение: темы для общения и обмена новостями') }}</li>
+                <li>{{ _('Сообщения: личные сообщения') }}</li>
+                <li>{{ _('Классная комната: обучающие видео') }}</li>
+                <li>{{ _('Заявки: запросы и заявки пользователей') }}</li>
+                <li>{{ _('Настройки: настройки аккаунта и системы') }}</li>
+            </ul>
+        </div>
+    </div>
+    <div id="overlay" class="overlay" onclick="closeSidebar()"></div>
+    <div class="main-content" id="mainContent"></div>
+</div>
+<style>
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+.sidebar-toggle {
+    position: fixed;
+    z-index: 2;
+    left: 10px;
+    top: 10px;
+    padding: 10px;
+    cursor: pointer;
+    background-color: #007bff;
+    border: none;
+    outline: none;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-around;
+    width: 30px;
+    height: 25px;
+}
+.menu-bar {
+    display: block;
+    width: 100%;
+    height: 3px;
+    background-color: #fff;
+    transition: 0.3s;
+}
+.sidebar {
+    width: 200px;
+    height: 100vh;
+    background-color: #007bff;
+    padding: 20px;
+    color: white;
+    position: fixed;
+    top: 0;
+    left: -200px;
+    overflow-y: auto;
+    transition: left 0.5s;
+    z-index: 1; /* Увеличиваем z-index, чтобы сайдбар был поверх overlay и #study-methods */
+
+}
+.sidebar.active {
+    left: 0;
+}
+.main-content {
+    margin-left: 220px;
+    padding: 20px;
+    transition: margin-left 0.5s;
+}
+.main-content.active {
+    margin-left: 0;
+}
+.sidebar ul {
+    list-style: none;
+    padding: 0;
+    margin-top: 20px;
+}
+
+.sidebar li + li {
+    margin-top: 15px;
+}
+
+.sidebar a {
+    display: block;
+    padding: 10px 15px;
+    background-color: #0056b3;
+    text-decoration: none;
+    color: white;
+    border-radius: 5px;
+    transition: background-color 0.3s;
+}
+
+.sidebar a:hover {
+    background-color: #004080;
+}
+.overlay {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(0, 0, 0, 0.5);
+    z-index: 1;
+}
+.sidebar li.active a {
+    background-color: #003366;
+}
+.modal {
+display: none;
+position: fixed;
+z-index: 1000;
+left: 0;
+top: 0;
+width: 100%;
+height: 100%;
+overflow: auto;
+background-color: rgba(0,0,0,0.4);
+}
+.modal-content {
+    background-color: #fefefe;
+    margin: 10% auto;
+    padding: 20px;
+    border: 1px solid #888;
+    width: 50%;
+}
+.close {
+    color: #aaa;
+    position: absolute;
+    right: 20px;
+    top: 20px;
+    font-size: 28px;
+    font-weight: bold;
+}
+.close:hover,
+.close:focus {
+    color: black;
+    text-decoration: none;
+    cursor: pointer;
+}
+.modal-header h2 {
+    margin-left: 20px;
+    padding-top: 10px;
+    display: inline-block;
+    vertical-align: top;
+}
+.modal-list {
+    list-style: none;
+    padding-top: 20px;
+}
+
+.modal-list li {
+    margin-bottom: 10px;
+}
+.info-icon {
+    display: block;
+    text-align: center;
+    padding: 10px;
+    cursor: pointer;
+    color: white;
+}
+
+</style>
+<script>
+function openModal() {
+    document.getElementById('infoModal').style.display = 'block';
+}
+
+function closeModal() {
+    document.getElementById('infoModal').style.display = 'none';
+}
+window.onclick = function(event) {
+    var modal = document.getElementById('infoModal');
+    if (event.target == modal) {
+        closeModal();
+    }
+}
+document.getElementById('openSidebarMenu').addEventListener('click', function() {
+    var sidebar = document.getElementById('sidebar');
+    var mainContent = document.getElementById('mainContent');
+    sidebar.classList.toggle('active');
+    mainContent.classList.toggle('active');
+});
+document.addEventListener('keydown', function(event) {
+    if (event.key === 'Escape') {
+        var sidebar = document.getElementById('sidebar');
+        if (sidebar.classList.contains('active')) {
+            sidebar.classList.remove('active');
+        }
+    }
+});
+</script>
+{% endblock %}

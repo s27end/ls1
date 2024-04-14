@@ -1,0 +1,118 @@
+{% extends 'base.html' %}
+
+{% block title %}
+    Заявки
+{% endblock %}
+
+{% block content %}
+<div class="main-container">
+    {% include 'main_content.html' %}
+
+    <div class="requests-container" id="mainContent">
+        <h1>Заявки</h1>
+
+        <div class="request-form">
+            <form action="{{ url_for('requests') }}" method="POST">
+                <select id="receiver_username" name="receiver_username" required>
+                    <option value="" disabled selected hidden>Выберите пользователя</option>
+                    {% for user in potential_partners %}
+                        <option value="{{ user.username }}">{{ user.get_full_name() }}</option>
+                    {% endfor %}
+                </select>
+                <button type="submit">Отправить заявку</button>
+            </form>
+        </div>
+
+        <div class="request-lists">
+            <div class="sent-requests">
+                <h2>Отправленные заявки:</h2>
+                <ul>
+                    {% for request in language_requests_sent %}
+                    <li class="request-item">
+                        Заявка отправлена пользователю: <a href="{{ url_for('send_message', receiver_id=request.receiver_user.id) }}">{{ request.receiver_user.get_full_name() }}</a>
+                        - статус: <span class="status-{{ request.status }}">
+                            {% if request.status == 'pending' %}
+                            в ожидании
+                            {% elif request.status == 'accepted' %}
+                            принята
+                            {% elif request.status == 'rejected' %}
+                            отклонена
+                            {% else %}
+                            {{ request.status }}
+                            {% endif %}
+                        </span>
+                    </li>
+                    {% endfor %}
+                </ul>
+            </div>
+
+            <div class="received-requests">
+                <h2>Полученные заявки:</h2>
+                <ul>
+                {% for request in language_requests_received %}
+                <li class="request-item">
+                    Заявка от пользователя: <a href="{{ url_for('send_message', receiver_id=request.sender_user.id) }}">{{ request.sender_user.get_full_name() }}</a>
+                    {% if request.status == 'pending' %}
+                    <span class="status-pending">в ожидании</span>
+                    <a href="{{ url_for('accept_request', request_id=request.id) }}" class="action-link accept">✔️</a>
+                    <a href="{{ url_for('reject_request', request_id=request.id) }}" class="action-link reject">❌</a>
+                    {% elif request.status == 'accepted' %}
+                    <span class="status-accepted">принята</span>
+                    {% elif request.status == 'rejected' %}
+                    <span class="status-rejected">отклонена</span>
+                    {% else %}
+                    <span class="status-{{ request.status }}">{{ request.status|replace('_', ' ')|capitalize }}</span>
+                    {% endif %}
+                </li>
+                {% endfor %}
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    .requests-container {
+        display: flex;
+        flex-direction: column;
+        max-width: 800px;
+        margin: 0 auto;
+        padding: 20px;
+    }
+    .request-form {
+        margin-bottom: 20px;
+    }
+    .request-lists {
+        display: flex;
+        flex-direction: row;
+        justify-content: space-between;
+    }
+    .sent-requests,
+    .received-requests {
+        flex: 1;
+        margin-right: 10px;
+        background-color: #f7f7f7;
+        padding: 10px;
+        border-radius: 5px;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    }
+    .received-requests {
+        margin-right: 0; /* Убираем отступ справа для последнего столбца */
+    }
+    .request-item {
+        margin-bottom: 10px;
+        padding: 10px;
+        border-radius: 5px;
+        background-color: white;
+    }
+    .status-pending { color: orange; }
+    .status-accepted { color: green; }
+    .status-rejected { color: red; }
+    .action-link { padding: 0 5px; }
+    .action-link.accept { color: green; }
+    .action-link.reject { color: red; }
+    h1, h2 {
+        text-align: center;
+    }
+</style>
+{% endblock %}

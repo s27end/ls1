@@ -1,0 +1,134 @@
+{% extends 'main_content.html' %}
+
+{% block title %}
+    Форум
+{% endblock %}
+
+{% block content %}
+{% include 'base.html' %}
+
+<div class="forum-content">
+    {% include 'main_content.html' %}
+    <h1 style="text-align: center;">Треды обсуждения</h1>
+    <div>
+        <form action="{{ url_for('news_list') }}" method="post">
+            <input type="text" name="title" placeholder="Название треда" required><br>
+            <select name="language" required>
+                <option value="{{ user.native_language }}">{{ user.native_language }}</option>
+                <option value="{{ user.target_language }}">{{ user.target_language }}</option>
+            </select><br>
+            <button type="submit">Создать</button>
+        </form>
+    </div>
+    <div style="margin-top: 10px; margin-left: 20px;">
+        <label for="languageFilter" style="display: inline-block; margin-right: 10px;">Фильтр по языку:</label>
+        <select id="languageFilter" onchange="filterThreadsByLanguage(this.value)" style="display: inline-block;">
+            <option value="">Все языки</option>
+            <option value="English">English</option>
+            <option value="Русский">Русский</option>
+            <option value="Español">Español</option>
+            <option value="Deutch">Deutsch</option>
+        </select>
+    </div>
+    <ul id="threadList" style="padding-right: 20px;">
+    {% for thread in threads %}
+    <li class="thread-item" data-language="{{ thread.language }}">
+        <a href="{{ url_for('news_thread', thread_id=thread.id) }}">
+            <h2>{{ thread.title }}</h2>
+        </a>
+        <p>Язык: {{ thread.language }}</p>
+        <p>Дата создания: {{ thread.timestamp.strftime('%m.%d.%Y %H:%M UTC+0') }}</p>
+        {% if session['user_id'] == thread.user_id or session.get('is_admin') %}
+        <button class="delete-thread-button" onclick="deleteThread({{ thread.id }})">Удалить тред</button>
+        {% endif %}
+        <hr>
+    </li>
+    {% endfor %}
+    </ul>
+</div>
+<style>
+  .forum-content {
+    padding: 20px;
+  }
+  .forum-title {
+    text-align: center;
+    color: #333333;
+    margin-bottom: 20px;
+  }
+  .new-thread-form input,
+  .new-thread-form select {
+    width: 100%;
+    margin-bottom: 10px;
+    padding: 10px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+  }
+  .language-filter {
+    margin-bottom: 20px;
+  }
+  .language-filter label {
+    margin-right: 10px;
+  }
+  .language-filter select {
+    padding: 10px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+  }
+  .thread-list {
+    list-style-type: none;
+    padding: 0;
+  }
+  .thread-item {
+    background-color: #fff;
+    padding: 15px;
+    margin-bottom: 10px;
+    border-radius: 4px;
+  }
+  .thread-item h2 {
+    margin-top: 0;
+    color: #555;
+  }
+  .thread-item p {
+    color: #777;
+  }
+  .thread-item hr {
+    margin-top: 10px;
+  }
+  .delete-thread-button {
+    display: inline-block;
+    color: #dc3545;
+    border: none;
+    background: none;
+    cursor: pointer;
+  }
+</style>
+<script>
+function deleteThread(threadId) {
+  if (confirm('Вы уверены, что хотите удалить этот тред?')) {
+    fetch('{{ url_for('delete_thread') }}', {
+      method: 'POST',
+      body: JSON.stringify({ thread_id: threadId }),
+      headers: {
+        'Content-Type': 'application/json'
+      }
+    }).then(response => {
+      if (response.ok) {
+        window.location.href = '{{ url_for('news_list') }}'; // Перенаправляем на список тредов
+      } else {
+        alert('Не удалось удалить тред.');
+      }
+    });
+  }
+}
+  function filterThreadsByLanguage(language) {
+    var threads = document.querySelectorAll('.thread-item');
+    threads.forEach(thread => {
+      if (language && thread.dataset.language !== language) {
+        thread.style.display = 'none';
+      } else {
+        thread.style.display = 'list-item';
+      }
+    });
+  }
+</script>
+{% endblock %}

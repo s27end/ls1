@@ -1,0 +1,133 @@
+{% extends 'base.html' %}
+
+{% block title %}
+    {{ _('Главная страница') }}
+{% endblock %}
+
+{% block content %}
+<style>
+body {
+    font-family: 'Roboto', sans-serif;
+    font-size: 16px;
+    text-align: center;
+    background-color: #f4f4f4;
+    margin: 0;
+    color: #555;
+}
+.container {
+    width: 80%;
+    margin: auto;
+    overflow: hidden;
+}
+header {
+    background: #3399ff;
+    color: #fff;
+    padding-top: 30px;
+    min-height: 70px;
+    border-bottom: #2980b9 3px solid;
+}
+header a {
+    color: #fff;
+    text-decoration: none;
+    text-transform: uppercase;
+    font-size: 16px;
+}
+header li {
+    float: left;
+    display: inline;
+    padding: 0 20px 0 20px;
+}
+header #branding {
+    float: left;
+}
+header #branding h1 {
+    margin: 0;
+}
+header nav {
+    float: right;
+    margin-top: 10px;
+}
+header .highlight, header .current a {
+    color: #e8491d;
+    font-weight: bold;
+}
+header a:hover {
+    color: #ffffff;
+    font-weight: bold;
+}
+button {
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    background-color: #007bff;
+    color: white;
+    cursor: pointer;
+    font-size: 18px;
+    margin: 20px 0;
+}
+button:hover {
+    background-color: #0056b3;
+}
+.showcase {
+    min-height: 400px;
+    background-size: cover;
+    text-align: left;
+    color: #ffffff;
+}
+.showcase h1 {
+    font-size: 55px;
+    margin-top: 100px;
+    margin-bottom: 10px;
+    text-transform: uppercase;
+    letter-spacing: 5px;
+}
+.showcase p {
+    font-size: 20px;
+    line-height: 1.6em;
+    color: #000000;
+}
+.divider {
+    height: 2px;
+    background-color: #3399ff;
+    margin: 20px 0;
+}
+.content-block {
+    background-color: #fff;
+    padding: 20px;
+    margin-bottom: 20px;
+    border-left: 3px solid #3399ff;
+}
+</style>
+<header>
+    <div class="container">
+        <div id="branding">
+            <h1><span class="highlight">{{ _('Языковой') }}</span> {{ _('Сервис') }}</h1>
+        </div>
+        <nav>
+            <ul>
+                <li class="current"><a href="/register">{{ _('Регистрация') }}</a></li>
+                <li><a href="/login">{{ _('Вход') }}</a></li>
+            </ul>
+        </nav>
+    </div>
+</header>
+<section class="showcase">
+    <div class="container">
+        <h1 class="learn-languages">{{ _('Изучайте языки с удовольствием') }}</h1>
+        <p>{{ _('Присоединяйтесь к нашему уникальному сообществу, где вы можете самостоятельно изучать новые языки, практиковаться с носителями языка, родные языки которых вы изучаете, и обмениваться знаниями в тематических тредах. Начните свой путь к владению новыми языками уже сегодня!') }}</p>
+        <h1 class="communicate-without-borders">{{ _('Общайтесь без границ') }}</h1>
+        <p>{{ _('Наши языковые курсы и интерактивные треды созданы для того, чтобы вы могли легко общаться и учиться у других. Разнообразие языковых пар позволяет вам найти идеального партнера для практики, а интуитивно понятные уроки обеспечивают стабильный прогресс. Погрузитесь в языковую среду, где каждый день - это возможность узнать что-то новое!') }}</p>
+    </div>
+</section>
+<footer style="background-color: #2f83cc; color: white; padding: 20px 0;">
+    <div class="container">
+        <div style="text-align: left;">
+            <h2>{{ _('Работа ученика 10Б класса') }}</h2>
+            <h2>{{ _('МБОУ "Гимназии №1 им. Н. М. Пржевальского" Грязнова Максима') }}</h2>
+            <p>{{ _('Адрес: ул. Кузнецова, 3А, Москва, Россия') }}</p>
+            <p>{{ _('Телефон: +7 (495) 166-87-45') }}</p>
+            <p>{{ _('Электронная почта: kuznecova3a@proton.me') }}</p>
+        </div>
+    </div>
+</footer>
+{% endblock %}

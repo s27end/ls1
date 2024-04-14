@@ -1,0 +1,96 @@
+{% extends 'base.html' %}
+
+{% block title %}
+    {{ thread.title }}
+{% endblock %}
+
+{% block content %}
+<div class="forum-content">
+    <a class="back-link" href="{{ url_for('news_list') }}">&larr; Вернуться к списку тредов</a>
+
+    <h1 class="thread-title">{{ thread.title }}</h1>
+    <div class="new-comment-form">
+        <form action="{{ url_for('news_thread', thread_id=thread.id) }}" method="post">
+            <textarea name="content" placeholder="Ваш комментарий" required></textarea><br>
+            <button type="submit">Отправить</button>
+        </form>
+    </div>
+
+    {% for post in posts %}
+    <div class="post" id="post-{{ post.id }}">
+        <p class="post-content">{{ post.content }}</p>
+        <p class="post-date">Дата публикации: <span class="date">{{ post.timestamp.strftime('%m.%d.%Y %H:%M') }} UTC+0</span></p>
+        {% for comment in post.comments %}
+        <div class="comment" id="comment-{{ comment.id }}">
+            <p><b class="username">{{ comment.user.username }}</b> написал: {{ comment.content }}</p>
+            <p class="comment-date">Дата комментария: <span class="date">{{ comment.timestamp.strftime('%m.%d.%Y %H:%M') }} UTC+0</span></p>
+            {% if current_user.is_authenticated and (current_user.id == comment.user_id or current_user.is_admin) %}
+            <form action="{{ url_for('delete_comment', comment_id=comment.id) }}" method="post">
+                <button type="submit">Удалить комментарий</button>
+            </form>
+            {% endif %}
+        </div>
+        {% endfor %}
+    </div>
+    {% endfor %}
+</div>
+
+<style>
+  body {
+    background-color: #f9f9f9;
+    margin: 0;
+    padding: 0;
+    font-family: Arial, sans-serif;
+  }
+
+  .forum-content {
+    padding: 20px;
+  }
+
+  .back-link {
+    color: #007bff;
+    text-decoration: none;
+    font-weight: bold;
+  }
+
+  .thread-title {
+    color: #333333;
+    margin-bottom: 20px;
+  }
+
+  .new-comment-form textarea {
+    width: 100%;
+    margin-bottom: 10px;
+  }
+
+  .post {
+    background-color: #fff;
+    padding: 15px;
+    margin-bottom: 15px;
+  }
+
+  .post-content {
+    font-size: 16px;
+    color: #555;
+  }
+
+  .post-date, .comment-date {
+    font-size: 14px;
+    color: #777;
+  }
+
+  .date {
+    color: #28a745;
+  }
+
+  .username {
+    color: #17a2b8;
+  }
+
+  .comment {
+    background-color: #eee;
+    padding: 10px;
+    margin-top: 10px;
+  }
+</style>
+{% endblock %}

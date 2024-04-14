@@ -1,0 +1,193 @@
+{% extends 'base.html' %}
+
+{% block title %}
+  Беседа
+
+{% endblock %}
+{% block content %}
+<div class="chat-container">
+  <div class="chat-header">
+    <a href="{{ url_for('messages') }}" class="back-arrow">←</a>
+    <h1>Беседа с {{ partner.get_full_name() }}</h1>
+    <button class="call-button"  onclick="window.open('{{ url_for('start_call') }}', '_blank'">Начать видеозвонок</button>
+  </div>
+  <div class="chat-messages">
+    {% for message in messages %}
+      <div class="chat-message {{ 'mine' if message.sender.id == user.id else 'theirs' }}">
+        <div class="chat-message-content">
+          <p>{{ message.body }}</p>
+        </div>
+        <div class="chat-message-meta">
+          <span>{{ message.timestamp.strftime('%H:%M') }}</span>
+        </div>
+      </div>
+    {% else %}
+      <p class="no-messages">Сообщений нет.</p>
+    {% endfor %}
+  </div>
+  <form action="{{ url_for('send_message', receiver_id=partner.id) }}" method="POST" class="chat-form">
+    <textarea name="message" placeholder="Напишите сообщение..." class="message-input" rows="1" required></textarea>
+    <button type="submit" class="send-button">Отправить</button>
+  </form>
+</div>
+<style>
+.form {
+    margin: 0 auto;
+    padding: 20px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    display: flex;
+    flex-direction: column;
+}
+  .chat-form {
+    width: 3000px;
+    padding: 0;
+    display: 3000px;
+    align-items: center;
+    justify-content: space-between;
+  }
+  .chat-container {
+    display: flex ;
+    flex-direction: column;
+    height: 100vh;
+    width: 100%;
+    margin: auto;
+    background: #f9f9f9;
+  }
+  .chat-header {
+    background: #5181b8;
+    color: #fff;
+    padding: 10px;
+    display: flex;
+    align-items: center;
+  }
+  .back-arrow {
+    color: #fff;
+    text-decoration: none;
+    font-size: 24px;
+    margin-right: 10px;
+  }
+  .chat-messages {
+    flex-grow: 1;
+    overflow-y: auto;
+    padding: 10px;
+    background: #fff;
+    margin-bottom: 10px;
+  }
+  .chat-message {
+    padding: 5px;
+    margin-bottom: 10px;
+    border-radius: 5px;
+  }
+  .mine {
+    background: #a3c9ff;
+    align-self: flex-end;
+  }
+  .theirs {
+    background: #e7e7e7;
+    align-self: flex-start;
+  }
+  .chat-message-content {
+    margin-bottom: 5px;
+  }
+  .chat-message-meta {
+    text-align: right;
+    color: #555;
+    font-size: 12px;
+  }
+  .message-input {
+    width: 100%;
+    padding: 10px;
+    border: none;
+    resize: none;
+    outline: none;
+  }
+  .send-button {
+    padding: 10px 15px;
+    margin-left: 10px;
+  }
+.call-button {
+  padding: 10px 20px;
+  margin-left: 10px;
+  background-color: #4CAF50; /* Зеленый цвет */
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 16px;
+}
+
+.call-button:hover {
+  background-color: #45a049; /* Темно-зеленый цвет */
+}
+  @media (max-width: 768px) {
+    .chat-header, .chat-messages, .chat-form {
+      padding: 10px; /* Меньше паддинга для мобильных устройств */
+    }
+
+    .chat-container {
+      width: 100%; /* Ширина контейнера на всю ширину экрана */
+      margin: 0; /* Убираем внешние отступы */
+    }
+
+    .message-input, .send-button, .call-button {
+      font-size: 14px; /* Меньший размер шрифта для элементов управления */
+    }
+
+    .chat-messages {
+      margin-bottom: 0; /* Убираем нижний маргин у сообщений */
+    }
+
+    .call-button, .send-button {
+      padding: 8px 10px; /* Меньше паддинга для кнопок */
+    }
+
+    /* Другие стили для адаптации под мобильные устройства */
+  }
+</style>
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+  var chatMessages = document.querySelector('.chat-messages');
+  var messageInput = document.querySelector('.message-input');
+  var sendButton = document.querySelector('.send-button');
+
+  function scrollToBottom() {
+    chatMessages.scrollTop = chatMessages.scrollHeight;
+  }
+
+  function startCall() {
+    var callAlert = document.createElement('div');
+    callAlert.textContent = 'Поступил звонок!';
+    callAlert.style.padding = '10px';
+    callAlert.style.marginBottom = '10px';
+    callAlert.style.borderRadius = '5px';
+    callAlert.style.background = '#e7e7e7';
+    callAlert.style.textAlign = 'center';
+    chatMessages.appendChild(callAlert);
+    scrollToBottom();
+    window.open('{{ url_for('start_call') }}', '_blank');
+  }
+
+  // Связываем вашу кнопку начала звонка с функцией startCall
+  var callButton = document.querySelector('button[onclick^="window.open"]');
+  callButton.addEventListener('click', startCall);
+
+  scrollToBottom();
+
+  messageInput.addEventListener('input', function () {
+    sendButton.disabled = !this.value.trim();
+  });
+
+  document.querySelector('.chat-form').addEventListener('submit', function (e) {
+    scrollToBottom();
+  });
+
+  messageInput.addEventListener('keypress', function (e) {
+    if (e.key === 'Enter' && !e.shiftKey) {
+      e.preventDefault();
+      this.form.submit();
+    }
+  });
+});
+</script>
+{% endblock %}

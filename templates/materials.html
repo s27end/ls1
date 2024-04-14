@@ -1,0 +1,185 @@
+{% extends 'base.html' %}
+
+{% block title %}
+Учебные материалы
+{% endblock %}
+
+{% block content %}
+<div class="forum-content">
+{% include 'main_content.html' %}
+
+<h1 style="text-align: center; margin-bottom: 20px; cursor: pointer;" onclick="toggleMethods()">
+    Методы изучения языков <span id="toggleIcon">&#9660;</span>
+</h1>
+
+<div id="study-methods" style="display: none;">
+    <div class="study-method">
+        <h2>1. Активное разговорное практикование</h2>
+        <p>Нужно много говорить и не бояться делать ошибки. Когда говоришь - не переводи в голове с родного языка на иностранный (нужно сразу же брать иностранные слова и строить с ними предложения). Говори простыми предложениями.</p>
+    </div>
+
+    <div class="study-method">
+        <h2>2. Поставьте себе языковые цели</h2>
+        <p>Нужно знать, для чего тебе изучать язык, а также иметь большое желание и необходимость в нем. Составь цели (практические цели через 3 месяца, 6 месяцев, год).</p>
+    </div>
+
+    <div class="study-method">
+        <h2>3. Изучать каждый день</h2>
+        <p>Изучать каждый день: 30-60 минут, 5-6 дней в неделю.</p>
+    </div>
+
+    <div class="study-method">
+        <h2>4. Практикуйте, а не учитесь наизусть</h2>
+        <p>Не учить язык, а практиковать (смотреть фильмы; читать книги, журналы, о стране, в которой говорят на этом языке; практиковаться с сайтами - всё на иностранном языке).</p>
+    </div>
+
+    <div class="study-method">
+        <h2>5. Наслаждайтесь процессом</h2>
+        <p>Нужно получать удовольствие от языка и любить его.</p>
+    </div>
+</div>
+<div id="video-player-container" style="text-align: center; margin-top: 30px;">
+    <h2>Видео для изучения языка</h2>
+    <iframe id="video-player" width="560" height="315" src="https://www.youtube.com/embed/" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+</div>
+<style>
+.forum-content {
+    display: flex; /* Используем flexbox для выравнивания содержимого */
+    flex-direction: column; /* Выравнивание элементов в колонку */
+    align-items: center; /* Центрирование элементов по горизонтали */
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.video-player-container {
+    text-align: center;
+    margin-top: 30px;
+    width: 100%; /* Убедитесь, что контейнер использует всю доступную ширину */
+}
+
+#video-player {
+    display: block; /* Делаем iframe блочным элементом */
+    margin: auto; /* Автоматические отступы для горизонтального выравнивания */
+    width: 560px; /* Фиксированная ширина для iframe */
+    height: 315px; /* Фиксированная высота для iframe */
+}
+.study-method {
+    background: #f9f6ee;
+    padding: 20px;
+    margin-bottom: 30px;
+    box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.2);
+    border-left: 3px solid #ffcc00;
+    position: relative;
+    overflow: hidden;
+    font-family: 'Noteworthy', 'Comic Sans MS', cursive;
+}
+.study-method:before {
+    content: "";
+    position: absolute;
+    top: -10px;
+    right: 0;
+    left: 0;
+    height: 20px;
+    background: repeating-linear-gradient(
+      -45deg,
+      #f9f6ee,
+      #f9f6ee 10px,
+      #ffcc00 10px,
+      #ffcc00 20px
+    );
+}
+
+.study-method h2 {
+    margin-bottom: 0.5em;
+    font-size: 1.5em;
+}
+
+.study-method p {
+    font-size: 1em;
+    line-height: 1.4;
+    text-align: justify;
+}
+.study-methods {
+    position: relative;
+    z-index: 3; /* Убедитесь, что это значение меньше, чем у сайдбара и overlay */
+}
+</style>
+<script>
+function toggleMethods() {
+    var methods = document.getElementById('study-methods');
+    var icon = document.getElementById('toggleIcon');
+    var isMethodsHidden = methods.style.display === 'none';
+
+    methods.style.display = isMethodsHidden ? 'block' : 'none';
+    icon.innerHTML = isMethodsHidden ? '&#9650;' : '&#9660;';
+}
+
+document.addEventListener('DOMContentLoaded', function() {
+    var videoPlayer = document.getElementById('video-player');
+    var currentPlaylistUrl = localStorage.getItem('currentPlaylistUrl');
+    var currentTime = localStorage.getItem('currentTime');
+
+    // Устанавливаем источник видео и текущее время, если они были сохранены
+    if (currentPlaylistUrl) {
+        videoPlayer.src = currentPlaylistUrl + (currentTime ? `?start=${Math.floor(currentTime)}` : '');
+    }
+
+    // Добавляем обработчик события, чтобы сохранять текущее время видео
+    videoPlayer.addEventListener('timeupdate', function() {
+        localStorage.setItem('currentTime', videoPlayer.currentTime);
+    });
+
+    // Сохраняем URL плейлиста при его загрузке
+    videoPlayer.addEventListener('loadedmetadata', function() {
+        localStorage.setItem('currentPlaylistUrl', videoPlayer.src.split('?')[0]);
+    });
+
+    fetch('/get_user_language')
+        .then(response => response.json())
+        .then(data => {
+            if (data.error) {
+                console.error(data.error);
+                return;
+            }
+
+            const languagePlaylists = {
+                'Русский': {
+                    'English': 'https://www.youtube.com/embed/videoseries?list=PLD6SPjEPomaustGSgYNsn3V62BTQeH85X',
+                    'Deutsch': 'https://www.youtube.com/embed/videoseries?list=PLpvrYdFr65leeHUbDPOQftEvU6qKhhi30',
+                    'Español': 'https://www.youtube.com/embed/videoseries?list=PLmCjHvvYpNqb8tiywUv0QPlN30dPFW6yq'
+                },
+                'English': {
+                    'Русский': 'https://www.youtube.com/embed/videoseries?list=PLx1Hrg5Bg3xrnm30dNPZ5q2R9J6Zz2vUq',
+                    'Deutsch': 'https://www.youtube.com/embed/videoseries?list=PLF9mJC4RrjIhS4MMm0x72-qWEn1LRvPuW',
+                    'Español': 'https://www.youtube.com/embed/videoseries?list=PLv63dFTP4Sjq6knRsZQI-bTnRE38cZZoy'
+                },
+                'Deutsch': {
+                    'English': 'https://www.youtube.com/embed/videoseries?list=PLynCn5y2sjChKQjGdwffrGlIDtdIxURkl',
+                    'Русский': 'https://www.youtube.com/embed/videoseries?list=PLWvi1Xu4Go5_tFo0fH_tunV0hQo9JutCe',
+                    'Español': 'https://www.youtube.com/embed/videoseries?list=PL6o1DvJI0r8k1hyKYCNzUSmKXIuUMc5A5'
+                },
+                'Español': {
+                    'English': 'https://www.youtube.com/embed/videoseries?list=PLgrNDDl9MxYmUmf19zPiljdg8FKIRmP78',
+                    'Deutsch': 'https://www.youtube.com/embed/videoseries?list=PLKQEL9j11yiXOjO81iGdHRuLxykVNhUaA',
+                    'Русский': 'https://www.youtube.com/embed/videoseries?list=PLDPbTq7Aspr0rvjBQNvi0klRwJFpGPqQM'
+                }
+            };
+
+            const userNativeLanguage = data.native_language;
+            const userLearningLanguage = data.target_language;
+            const playlistsForNative = languagePlaylists[userNativeLanguage];
+            const playlistUrl = playlistsForNative ? playlistsForNative[userLearningLanguage] : null;
+
+            if (playlistUrl && !currentPlaylistUrl) {
+                videoPlayer.src = playlistUrl;
+                videoPlayer.style.display = 'block';
+            } else {
+                console.error('Для данной комбинации языков плейлист не найден');
+            }
+        })
+        .catch(error => {
+            console.error('Ошибка при получении языка пользователя: ', error);
+        });
+});
+</script>
+{% endblock %}

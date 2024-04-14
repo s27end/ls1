@@ -1,0 +1,67 @@
+{% extends 'base.html' %}
+
+{% block head %}
+<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+<style>
+    body {
+        background: url('/static/log.png') no-repeat center center fixed;
+        background-size: cover;
+        height: 100%;
+        width: 100%;
+        overflow: hidden;
+    }
+    .form-container {
+        width: calc(100% - 22px);
+        max-width: 400px;
+        margin: 50px auto;
+        padding: 20px;
+        border: 1px solid #dee2e6;
+        border-radius: 5px;
+    }
+    .form-group {
+        margin-bottom: 15px;
+    }
+    .btn-primary {
+        margin-top: 20px;
+    }
+    .form-control {
+        font-size: 0.9rem;
+        height: calc(2.25rem + 2px);
+        padding: 0.375rem 0.75rem;
+        margin-bottom: 10px;
+    }
+    .form-check-label {
+        margin-top: 0.5rem;
+    }
+    .error-message {
+        color: #dc3545;
+        text-align: center;
+    }
+</style>
+{% endblock %}
+
+{% block title %}
+    {{ _('Логин') }}
+{% endblock %}
+
+{% block content %}
+<div class="form-container">
+    <h2 class="text-center">{{ _('Логин') }}</h2>
+    <form action="{{ url_for('login') }}" method="post">
+        <div class="form-group">
+            <input type="text" id="username" name="username" class="form-control" placeholder="{{ _('Имя пользователя') }}" required autofocus>
+        </div>
+        <div class="form-group">
+            <input type="password" id="password" name="password" class="form-control" placeholder="{{ _('Пароль') }}" required>
+        </div>
+        <div class="form-group form-check">
+            <input type="checkbox" id="remember" name="remember" class="form-check-input" value="1">
+            <label class="form-check-label" for="remember">{{ _('Запомнить меня') }}</label>
+        </div>
+        <button class="btn btn-lg btn-primary btn-block" type="submit">{{ _('Войти') }}</button>
+        {% if invalid_login %}
+            <p class="error-message">{{ _('Неправильное имя пользователя или пароль. Пожалуйста, попробуйте еще раз.') }}</p>
+        {% endif %}
+    </form>
+</div>
+{% endblock %}
