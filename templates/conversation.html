@@ -109,7 +109,7 @@
 .call-button {
   padding: 10px 20px;
   margin-left: 10px;
-  background-color: #4CAF50; /* Зеленый цвет */
+  background-color: #4CAF50;
   color: white;
   border: none;
   border-radius: 5px;
@@ -118,32 +118,59 @@
 }
 
 .call-button:hover {
-  background-color: #45a049; /* Темно-зеленый цвет */
+  background-color: #45a049;
 }
   @media (max-width: 768px) {
-    .chat-header, .chat-messages, .chat-form {
-      padding: 10px; /* Меньше паддинга для мобильных устройств */
-    }
-
-    .chat-container {
-      width: 100%; /* Ширина контейнера на всю ширину экрана */
-      margin: 0; /* Убираем внешние отступы */
-    }
-
-    .message-input, .send-button, .call-button {
-      font-size: 14px; /* Меньший размер шрифта для элементов управления */
-    }
-
-    .chat-messages {
-      margin-bottom: 0; /* Убираем нижний маргин у сообщений */
-    }
-
-    .call-button, .send-button {
-      padding: 8px 10px; /* Меньше паддинга для кнопок */
-    }
-
-    /* Другие стили для адаптации под мобильные устройства */
+  .chat-header, .chat-messages, .chat-form {
+    padding: 10px;
   }
+
+  .chat-container {
+    width: 100%;
+    margin: 0;
+  }
+
+  .message-input, .send-button, .call-button {
+    font-size: 14px;
+  }
+
+  .chat-messages {
+    margin-bottom: 0;
+  }
+
+  .call-button, .send-button {
+    padding: 8px 10px;
+  }
+
+  .chat-header {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .back-arrow {
+    margin-bottom: 10px;
+  }
+
+  .call-button {
+    margin-top: 10px;
+    width: 100%;
+    margin-left: 0;
+  }
+
+  .chat-form {
+    display: flex;
+    flex-direction: column;
+  }
+
+  .send-button {
+    width: 100%;
+    margin-left: 0;
+    margin-top: 10px;
+  }
+  .message-input {
+    width: 100%;
+  }
+}
 </style>
 <script>
 document.addEventListener('DOMContentLoaded', function () {
